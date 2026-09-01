@@ -44,20 +44,16 @@ Slist* add_at_head(Slist *list, int32_t ele) {
 
     Node *new_node = get_new_node_(ele);
 
-    /* New node points to the old head */
     new_node->next = list->head;
 
-    /* Make the new node the head */
     list->head = new_node;
 
-    /* If the list was empty, this is also the tail */
     if (list->tail == NULL) {
         list->tail = new_node;
     }
 
     ++list->cont;
 
-    /* Update minimum and maximum values */
     if (list->cont == 1) {
         list->min_value = ele;
         list->max_value = ele;
@@ -81,19 +77,16 @@ Slist* add_at_tail(Slist *list, int32_t ele) {
 
     Node *new_node = get_new_node_(ele);
 
-    /* If the list is empty, new node is both head and tail */
     if (list->head == NULL) {
         list->head = new_node;
         list->tail = new_node;
     } else {
-        /* Attach the new node after the old tail */
         list->tail->next = new_node;
         list->tail = new_node;
     }
 
     ++list->cont;
 
-    /* Update minimum and maximum values */
     if (list->cont == 1) {
         list->min_value = ele;
         list->max_value = ele;
@@ -117,7 +110,6 @@ uint8_t Slist_lookup(const Slist *list, int32_t key) {
 
     Node *curr = list->head;
 
-    /* Go through every node */
     while (curr != NULL) {
         if (curr->data == key) {
             return 1;
@@ -134,24 +126,20 @@ uint8_t Slist_lookup(const Slist *list, int32_t key) {
 Slist* slist_delete_head(Slist *list) {
     assert(list != NULL);
 
-    /* Nothing to delete if the list is empty */
     if (list->cont == 0) {
         return list;
     }
 
     Node *temp = list->head;
 
-    /* Move head to the next node */
     list->head = temp->next;
 
-    /* If list becomes empty, tail must also be NULL */
     if (list->head == NULL) {
         list->tail = NULL;
     }
 
     --list->cont;
 
-    /* Free memory of the removed node */
     free(temp);
 
     return list;
@@ -162,21 +150,18 @@ Slist* slist_delete_head(Slist *list) {
 Slist* slist_delete_tail(Slist *list) {
     assert(list != NULL);
 
-    /* Nothing to delete if the list is empty */
     if (list->cont == 0) {
         return list;
     }
 
     Node *temp = list->tail;
 
-    /* If there is only one node, list becomes empty */
     if (list->head == list->tail) {
         list->head = NULL;
         list->tail = NULL;
     } else {
         Node *curr;
 
-        /* Find the node just before the tail */
         for (curr = list->head;
              curr->next != list->tail;
              curr = curr->next) {
@@ -188,7 +173,6 @@ Slist* slist_delete_tail(Slist *list) {
 
     --list->cont;
 
-    /* Free memory of the old tail */
     free(temp);
 
     return list;
@@ -199,44 +183,37 @@ Slist* slist_delete_tail(Slist *list) {
 Slist* add_at_position(Slist *list, int32_t ele, int32_t position) {
     assert(list != NULL);
 
-    /* Position 0 means add at the beginning */
     if (position == 0) {
         return add_at_head(list, ele);
     }
 
-    /* Negative positions are not allowed */
     if (position < 0) {
         return list;
     }
 
     Node *curr = list->head;
 
-    /* Move to the node before the required position */
     for (int32_t i = 0;
          i < position - 1 && curr != NULL;
          i++) {
         curr = curr->next;
     }
 
-    /* Position is outside the list */
     if (curr == NULL) {
         return list;
     }
 
     Node *new_node = get_new_node_(ele);
 
-    /* Insert new node after curr */
     new_node->next = curr->next;
     curr->next = new_node;
 
-    /* Update tail if node was added at the end */
     if (new_node->next == NULL) {
         list->tail = new_node;
     }
 
     ++list->cont;
 
-    /* Update minimum and maximum values */
     if (ele < list->min_value) {
         list->min_value = ele;
     }
@@ -253,43 +230,36 @@ Slist* add_at_position(Slist *list, int32_t ele, int32_t position) {
 Slist* delete_at_position(Slist *list, int32_t position) {
     assert(list != NULL);
 
-    /* Do nothing for an empty list or negative position */
     if (list->cont == 0 || position < 0) {
         return list;
     }
 
-    /* Position 0 means delete the first node */
     if (position == 0) {
         return slist_delete_head(list);
     }
 
     Node *curr = list->head;
 
-    /* Find the node before the one to delete */
     for (int32_t i = 0;
          i < position - 1 && curr != NULL;
          i++) {
         curr = curr->next;
     }
 
-    /* Position is not valid */
     if (curr == NULL || curr->next == NULL) {
         return list;
     }
 
     Node *temp = curr->next;
 
-    /* Skip the node that needs to be deleted */
     curr->next = temp->next;
 
-    /* Update tail if the last node was deleted */
     if (temp == list->tail) {
         list->tail = curr;
     }
 
     --list->cont;
 
-    /* Free memory of the removed node */
     free(temp);
 
     return list;
@@ -302,23 +272,19 @@ Slist* add_node_after(Slist *list, int32_t key, int32_t ele) {
 
     Node *curr = list->head;
 
-    /* Search for key */
     while (curr != NULL) {
         if (curr->data == key) {
             Node *new_node = get_new_node_(ele);
 
-            /* Insert new node after curr */
             new_node->next = curr->next;
             curr->next = new_node;
 
-            /* Update tail if added after the old tail */
             if (curr == list->tail) {
                 list->tail = new_node;
             }
 
             ++list->cont;
 
-            /* Update minimum and maximum values */
             if (list->cont == 1) {
                 list->min_value = ele;
                 list->max_value = ele;
@@ -348,27 +314,22 @@ Slist* delete_after(Slist *list, int32_t key) {
 
     Node *curr = list->head;
 
-    /* Search for key */
     while (curr != NULL) {
         if (curr->data == key) {
-            /* There is no node after curr */
             if (curr->next == NULL) {
                 return list;
             }
 
             Node *temp = curr->next;
 
-            /* Remove the next node */
             curr->next = temp->next;
 
-            /* Update tail if the removed node was the tail */
             if (temp == list->tail) {
                 list->tail = curr;
             }
 
             --list->cont;
 
-            /* Free memory of the removed node */
             free(temp);
 
             return list;
@@ -394,4 +355,108 @@ int32_t get_min_value(const Slist *list) {
     assert(list != NULL);
 
     return list->min_value;
+}
+
+
+/* Reverses the linked list */
+Slist* reverse_list(Slist *list) {
+    assert(list != NULL);
+
+    Node *prev = NULL;
+    Node *curr = list->head;
+    Node *next = NULL;
+
+    list->tail = list->head;
+
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+
+    list->head = prev;
+
+    return list;
+}
+
+
+/* Finds the middle node of the list */
+Node* find_middle(Slist *list) {
+    assert(list != NULL);
+
+    Node *slow = list->head;
+    Node *fast = list->head;
+
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    return slow;
+}
+
+
+/* Finds the nth node from the end */
+Node* find_nth_from_end(Slist *list, int32_t n) {
+    assert(list != NULL);
+
+    if (n <= 0) {
+        return NULL;
+    }
+
+    Node *first = list->head;
+    Node *second = list->head;
+
+    for (int32_t i = 0; i < n; i++) {
+        if (first == NULL) {
+            return NULL;
+        }
+
+        first = first->next;
+    }
+
+    while (first != NULL) {
+        first = first->next;
+        second = second->next;
+    }
+
+    return second;
+}
+
+
+/* Removes duplicate values from the list */
+Slist* remove_duplicates(Slist *list) {
+    assert(list != NULL);
+
+    Node *curr = list->head;
+
+    while (curr != NULL) {
+        Node *prev = curr;
+        Node *runner = curr->next;
+
+        while (runner != NULL) {
+            if (runner->data == curr->data) {
+                prev->next = runner->next;
+
+                if (runner == list->tail) {
+                    list->tail = prev;
+                }
+
+                Node *temp = runner;
+                runner = runner->next;
+
+                free(temp);
+
+                --list->cont;
+            } else {
+                prev = runner;
+                runner = runner->next;
+            }
+        }
+
+        curr = curr->next;
+    }
+
+    return list;
 }

@@ -63,4 +63,17 @@ int32_t get_max_value(const Slist *list);
 /* Returns the smallest value in the list */
 int32_t get_min_value(const Slist *list);
 
+
+/* Reverses the linked list */
+Slist* reverse_list(Slist *list);
+
+/* Finds the middle node of the list */
+Node* find_middle(Slist *list);
+
+/* Finds the nth node from the end */
+Node* find_nth_from_end(Slist *list, int32_t n);
+
+/* Removes duplicate values from the list */
+Slist* remove_duplicates(Slist *list);
+
 #endif
